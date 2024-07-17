@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: 01144873329
+      POSTGRES_DB: mydatabase
+    volumes:
+      - ./data:/data   
+    networks:
+      - etl_network
+
+  jupyter:
+    image: jupyter/datascience-notebook
+    container_name: jupyter-notebook
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      JUPYTER_TOKEN: "01144873329"
+    volumes:
+      - ./etl:/home/jovyan/work   
+      - ./data:/home/jovyan/data  
+    networks:
+      - etl_network
+    depends_on:
+      - db
+
+networks:
+  etl_network:
+    driver: bridge
